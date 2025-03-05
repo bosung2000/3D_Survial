@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    //컨트롤 움직임 
     [Header("Movement")]
     public float moveSpeed;
     public float _jumpPower;
