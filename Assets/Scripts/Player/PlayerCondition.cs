@@ -50,4 +50,14 @@ public class PlayerCondition : MonoBehaviour,IDamageable
         health.Subtract(dmamge);
         onTakeDamage?.Invoke();
     }
+
+    public bool UseStamina(float amount)
+    {
+        if (stanima.curValue -amount <0f)
+        {
+            return false;
+        }
+        stanima.Subtract(amount);
+        return true;
+    }
 }
