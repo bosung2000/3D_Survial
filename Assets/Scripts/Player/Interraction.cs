@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Interraction : MonoBehaviour
 {
@@ -23,23 +24,29 @@ public class Interraction : MonoBehaviour
 
     private void Update()
     {
-        Ray ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-        RaycastHit hit;
+        if (Time.time - lastCheckTime > checkRate)
+        {
+            lastCheckTime = Time.time;
 
-        if (Physics.Raycast(ray,out hit,maxCheckDistance,layerMask))
-        {
-            if (hit.collider.gameObject != curInteractGameObject)
+
+            Ray ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, maxCheckDistance, layerMask))
             {
-                curInteractGameObject = hit.collider.gameObject;
-                curinteractable =hit.collider.GetComponent<IInteractable>();
-                //프롬포트에 출력해줘라.
+                if (hit.collider.gameObject != curInteractGameObject)
+                {
+                    curInteractGameObject = hit.collider.gameObject;
+                    curinteractable = hit.collider.GetComponent<IInteractable>();
+                    SetPromptText();
+                }
             }
-        }
-        else
-        {
-            curInteractGameObject= null;
-            curinteractable= null;
-            promptText.gameObject.SetActive(false);
+            else
+            {
+                curInteractGameObject = null;
+                curinteractable = null;
+                promptText.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -47,5 +54,16 @@ public class Interraction : MonoBehaviour
     {
         promptText.gameObject.SetActive(true);
         promptText.text = curinteractable.GetInteractPrompt();
+    }
+
+    public void OnInteractInput(InputAction.CallbackContext context)
+    {
+        if (context.phase ==InputActionPhase.Started &&curinteractable !=null)
+        {
+            curinteractable.OnInteract();
+            curInteractGameObject = null;
+            curinteractable = null;
+            promptText.gameObject.SetActive(false);
+        }
     }
 }
