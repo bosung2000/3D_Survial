@@ -8,7 +8,7 @@ public interface IDamageable
     void TakePhysicalDamage(int damge);
 }
 
-public class PlayerCondition : MonoBehaviour,IDamageable
+public class PlayerCondition : MonoBehaviour, IDamageable
 {
     public UICondion uICondion;
 
@@ -20,16 +20,22 @@ public class PlayerCondition : MonoBehaviour,IDamageable
     public event Action onTakeDamage;
     void Update()
     {
-        hunger.Subtract(hunger.passiveValue *Time.deltaTime);
-        stanima.Add(stanima.passiveValue *Time.deltaTime);
 
-        if (hunger.curValue <=0f)
+        if (hunger.curValue <= 0f)
         {
-            health.Subtract(noHungerHealthDecay*Time.deltaTime);
+            health.Subtract(noHungerHealthDecay * Time.deltaTime);
         }
-        if (health.curValue ==0f)
+        else
+        {
+            hunger.Subtract(hunger.passiveValue * Time.deltaTime);
+        }
+        if (health.curValue == 0f)
         {
             Die();
+        }
+        else
+        {
+            stanima.Add(stanima.passiveValue * Time.deltaTime);
         }
     }
     public void Heal(float amout)
@@ -53,7 +59,7 @@ public class PlayerCondition : MonoBehaviour,IDamageable
 
     public bool UseStamina(float amount)
     {
-        if (stanima.curValue -amount <0f)
+        if (stanima.curValue - amount < 0f)
         {
             return false;
         }
